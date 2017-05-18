@@ -7,3 +7,12 @@ There are two LKD's (Loadable Kernel Modules):
 
 * Keylogger which saves characters to /tmp/arf
 * mkdir which changes uid to 0 (making you root) when `mkdir abra` is given
+
+## group members
+
+Nate Henry
+Maxwell Lambert
+Victor Naxter
+Kaylen Payer
+Cameron Panzenbock
+Luke Cusack
