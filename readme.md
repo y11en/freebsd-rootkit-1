@@ -10,9 +10,9 @@ There are two LKD's (Loadable Kernel Modules):
 
 ## group members
 
-Nate Henry
-Maxwell Lambert
-Victor Naxter
-Kaylen Payer
-Cameron Panzenbock
-Luke Cusack
+Nate Henry  
+Maxwell Lambert  
+Victor Naxter  
+Kaylen Payer  
+Cameron Panzenbock  
+Luke Cusack  
