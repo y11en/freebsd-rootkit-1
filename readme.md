@@ -16,3 +16,6 @@ Victor Naxter
 Kaylen Payer  
 Cameron Panzenbock  
 Luke Cusack  
+
+# Slides
+https://docs.google.com/presentation/d/1nhPdAhXu8IdGny1L_wdcAC0VnIXQ999YbyPJ-H9Vid4/edit?ts=59101fb7#slide=id.g1e1d5047a6_0_1
